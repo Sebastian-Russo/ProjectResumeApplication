@@ -1,0 +1,72 @@
+NAME: Sebastian Russo
+LOCATION: Bethlehem, PA
+EMAIL: russo.sebastian@gmail.com
+LINKEDIN: linkedin.com/in/sebastian-russo-2054565a
+
+--- SUMMARY ---
+AWS Cloud Engineer with 4+ years of specialized experience building Amazon Connect
+contact center solutions and serverless AWS architectures. Deep expertise in Lex V2
+bot design, Lambda integrations, CDK infrastructure, and end-to-end IVR development.
+Proven track record delivering high-volume, enterprise-grade call center systems for
+government and commercial clients (SSA, Amazon ProServe). Currently expanding into
+agentic AI — building autonomous customer service systems, multi-agent orchestration
+pipelines, and AI-powered tooling using Bedrock, Claude, and the broader LLM ecosystem.
+
+--- CORE SKILLS ---
+- Amazon Connect (contact flows, queues, routing, IVR design, Lex V2 bots, CCP)
+- AWS Serverless (Lambda, API Gateway, DynamoDB, Step Functions, Kinesis, Firehose, SQS, SNS, SES)
+- AWS Infrastructure (CDK, CloudFormation, CodePipeline, S3, CloudFront, IAM, Cognito)
+- AWS Analytics (QuickSight, Athena, Glue, CloudWatch dashboards and alarms)
+- GovCloud environments, Public Trust clearance
+- Languages: Python, JavaScript, TypeScript, Node.js, ReactJS
+- AI/ML: Bedrock, Claude API, Lex V2, multi-agent orchestration, RAG pipelines, agentic systems
+- Certifications: AWS Solutions Architect Professional, AWS Developer Associate,
+  AWS AI Practitioner Associate, AWS Machine Learning Associate
+
+--- EXPERIENCE ---
+
+Client: Amazon ProServe (Satellite/Telecom) | Oct 2025 – Apr 2026
+Key work:
+- Built Amazon Connect IVR call flows for a greenfield contact center (satellite comms rollout)
+- Designed Lex V2 bot to classify reason-for-call and route to appropriate agent queues
+- Built post-call survey solution triggered automatically on agent disconnect
+- Operated within AWS GovCloud with strict environment constraints
+
+Client: Social Security Administration (SSA) | Oct 2024 – Oct 2025
+Key work:
+- Built Lex self-service bots enabling callers to complete transactions without agent assistance
+- Designed Spam Blocker / Vocal CAPTCHA system using Lambda + Lex; reduced inbound spam significantly
+- Built CloudWatch metrics, alarms, and dashboards for proactive monitoring at extreme call volume
+
+FirstFire | AWS Connect Cloud Engineer II | Jan 2024 – Oct 2024
+Key work:
+- Built QuickSight dashboards via Iceberg tables (Connect Data Lake) and Kinesis > Firehose > S3 > Athena pipeline
+- Built voice-to-chat channel hopping solution reducing perceived wait times during high-volume periods
+- Built customer validation system querying backend DBs to verify caller identity; reduced auth time
+
+Aspen Tech Group | Cloud Engineer | Apr 2021 – Jul 2023
+Key work:
+- Built custom agent dashboards (ReactJS, S3/CloudFront) with CRM integrations via Lambda + API Gateway
+- CRM & ticketing integrations (Jira, Zendesk) via serverless automation; reduced case resolution time ~40%
+- Built voicemail capture, transcription, and email delivery solutions
+- Created reusable CDK/CloudFormation deployment templates with CodePipeline
+
+--- AI PROJECTS ---
+- Agentic Customer Service Bot — autonomous voice-capable agent with S3-backed knowledge base
+- Multi-Agent Personal Assistant — 30+ tools across Gmail, Google Calendar; agents chain calls autonomously
+- Personal Knowledge Base — hybrid semantic + keyword retrieval, CrossEncoder re-ranking, LLM query expansion
+- Financial Data Aggregator — real-time dashboard pulling from 6+ institutions via Plaid and direct APIs
+
+--- TARGET ROLE ---
+I am looking for: developer, engineer, or architect roles involving Amazon Connect,
+AWS serverless services, cloud contact center solutions, or agentic AI on AWS.
+Open to: full-time or contract, remote or hybrid.
+Not interested in: pure sales, account management, or non-technical roles.
+
+--- NOTES FOR EMAIL TONE ---
+Professional but approachable. Confident without being arrogant.
+Concise — 1 to 2 short paragraphs max.
+Lead with the most relevant experience for the company (Connect or serverless or AI depending on fit).
+Mention GovCloud / enterprise scale experience where relevant.
+Sign off as Sebastian Russo.
+
