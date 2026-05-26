@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ partner.name }} — Application</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1d27;
+      border-bottom: 1px solid #2d3148;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s;
+    }
+
+    .back-btn:hover { color: #a78bfa; }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge.direct_match  { background: #34d39920; color: #34d399; border: 1px solid #34d39940; }
+    .badge.general_match { background: #fbbf2420; color: #fbbf24; border: 1px solid #fbbf2440; }
+    .badge.no_match      { background: #f8717120; color: #f87171; border: 1px solid #f8717140; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 0;
+      height: calc(100vh - 61px);
+    }
+
+    /* Left panel — company info */
+    .sidebar {
+      background: #13151f;
+      border-right: 1px solid #1e2235;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .info-block h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    .info-block p, .info-block a {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .info-block a {
+      color: #a78bfa;
+      text-decoration: none;
+    }
+
+    .info-block a:hover { text-decoration: underline; }
+
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .job-tag {
+      background: #1a1d27;
+      border: 1px solid #2d3148;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    /* Status selector */
+    .status-section h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    .status-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .status-btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #2d3148;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+
+    .status-btn:hover { border-color: #a78bfa; color: #a78bfa; }
+
+    .status-btn.active-pending      { border-color: #64748b; color: #94a3b8; background: #94a3b810; }
+    .status-btn.active-applied      { border-color: #60a5fa; color: #60a5fa; background: #60a5fa10; }
+    .status-btn.active-responded    { border-color: #a78bfa; color: #a78bfa; background: #a78bfa10; }
+    .status-btn.active-interviewing { border-color: #34d399; color: #34d399; background: #34d39910; }
+    .status-btn.active-rejected     { border-color: #f87171; color: #f87171; background: #f8717110; }
+    .status-btn.active-not_relevant { border-color: #64748b; color: #64748b; background: #64748b10; }
+
+    /* Right panel — email editor */
+    .email-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .email-toolbar {
+      padding: 16px 24px;
+      background: #1a1d27;
+      border-bottom: 1px solid #2d3148;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .email-toolbar span {
+      font-size: 0.8rem;
+      color: #64748b;
+      flex: 1;
+    }
+
+    .toolbar-btn {
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+
+    .toolbar-btn:hover { opacity: 0.85; }
+
+    .btn-save    { background: #2d3148; color: #94a3b8; }
+    .btn-apply   { background: #a78bfa; color: #fff; }
+    .btn-copy    { background: #1e2235; color: #94a3b8; border: 1px solid #2d3148; }
+
+    .email-meta {
+      padding: 14px 24px;
+      background: #13151f;
+      border-bottom: 1px solid #1e2235;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+
+    .meta-label {
+      color: #64748b;
+      min-width: 60px;
+      font-weight: 500;
+    }
+
+    .meta-value { color: #94a3b8; }
+    .meta-value.email { color: #a78bfa; }
+
+    .email-body-wrap {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #email-editor {
+      width: 100%;
+      height: 100%;
+      background: #0f1117;
+      color: #e2e8f0;
+      border: none;
+      outline: none;
+      resize: none;
+      padding: 24px;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      font-family: inherit;
+    }
+
+    .no-email {
+      padding: 60px 24px;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #34d399;
+      color: #0f1117;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; }
+    .toast.error { background: #f87171; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-btn" href="/">← Back</a>
+  <h1>{{ partner.name }}</h1>
+  <span class="badge {{ partner.classification }}">
+    {{ partner.classification | replace('_', ' ') }}
+  </span>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: Company info + status -->
+  <div class="sidebar">
+
+    <div class="info-block">
+      <h3>Website</h3>
+      {% if partner.website %}
+        <a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>
+      {% else %}
+        <p>—</p>
+      {% endif %}
+    </div>
+
+    <div class="info-block">
+      <h3>Contact Email</h3>
+      <p>{{ partner.contact_email or '—' }}</p>
+    </div>
+
+    <div class="info-block">
+      <h3>Career Page</h3>
+      {% if partner.career_page_url %}
+        <a href="{{ partner.career_page_url }}" target="_blank">{{ partner.career_page_url }}</a>
+      {% else %}
+        <p>Not found</p>
+      {% endif %}
+    </div>
+
+    {% if partner.relevant_jobs or partner.jobs_found %}
+    <div class="info-block">
+      <h3>Relevant Jobs Found</h3>
+      <div class="jobs-list">
+        {% set jobs = (partner.relevant_jobs or partner.jobs_found).split(' | ') %}
+        {% for job in jobs %}
+          {% if job.strip() %}
+            <div class="job-tag">{{ job.strip() }}</div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if partner.reasoning %}
+    <div class="info-block">
+      <h3>AI Reasoning</h3>
+      <p>{{ partner.reasoning }}</p>
+    </div>
+    {% endif %}
+
+    <div class="info-block">
+      <h3>Description</h3>
+      <p>{{ partner.description or '—' }}</p>
+    </div>
+
+    <!-- Status selector -->
+    <div class="status-section">
+      <h3>Application Status</h3>
+      <div class="status-buttons">
+        {% for s in ['pending', 'applied', 'responded', 'interviewing', 'rejected', 'not_relevant'] %}
+        <button
+          class="status-btn {% if (partner.status or 'pending') == s %}active-{{ s }}{% endif %}"
+          onclick="setStatus('{{ s }}')"
+        >
+          {% if s == 'pending' %}⏳{% elif s == 'applied' %}📤{% elif s == 'responded' %}💬{% elif s == 'interviewing' %}🎯{% elif s == 'rejected' %}❌{% else %}🚫{% endif %}
+          {{ s | replace('_', ' ') | title }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Email editor -->
+  <div class="email-panel">
+
+    {% if email_content %}
+
+    <div class="email-toolbar">
+      <span>Draft email — edit freely before sending</span>
+      <button class="toolbar-btn btn-copy" onclick="copyEmail()">Copy</button>
+      <button class="toolbar-btn btn-save" onclick="saveEmail()">Save Edits</button>
+      <button class="toolbar-btn btn-apply" onclick="markApplied()">Mark as Applied ✓</button>
+    </div>
+
+    <!-- Parse TO/SUBJECT out of the file header for display -->
+    <div class="email-meta">
+      {% set lines = email_content.split('\n') %}
+      {% for line in lines[:4] %}
+        {% if line.startswith('TO:') %}
+        <div class="meta-row">
+          <span class="meta-label">To:</span>
+          <span class="meta-value email">{{ line[3:].strip() }}</span>
+        </div>
+        {% elif line.startswith('SUBJECT:') %}
+        <div class="meta-row">
+          <span class="meta-label">Subject:</span>
+          <span class="meta-value">{{ line[8:].strip() }}</span>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="email-body-wrap">
+      <textarea id="email-editor">{{ email_content }}</textarea>
+    </div>
+
+    {% else %}
+    <div class="no-email">
+      <p>No email drafted for this company.</p>
+      <p style="margin-top:8px; font-size:0.8rem;">
+        Run the email writer for {{ partner.classification }} matches to generate one.
+      </p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const companyIndex = {{ index }};
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast show" + (isError ? " error" : "");
+    setTimeout(() => t.className = "toast", 2500);
+  }
+
+  async function saveEmail() {
+    const content = document.getElementById("email-editor").value;
+    const res = await fetch("/api/save_email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ index: companyIndex, content })
+    });
+    const data = await res.json();
+    data.success ? showToast("Email saved.") : showToast("Save failed.", true);
+  }
+
+  async function setStatus(status) {
+    const res = await fetch("/api/update_status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ index: companyIndex, status })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Status → ${status}`);
+      // Update button highlights without full reload
+      document.querySelectorAll(".status-btn").forEach(btn => {
+        btn.className = "status-btn";
+        if (btn.textContent.toLowerCase().includes(status.replace("_", " "))) {
+          btn.classList.add(`active-${status}`);
+        }
+      });
+    } else {
+      showToast("Update failed.", true);
+    }
+  }
+
+  async function markApplied() {
+    await saveEmail();
+    await setStatus("applied");
+    showToast("Saved and marked as applied ✓");
+  }
+
+  function copyEmail() {
+    const content = document.getElementById("email-editor").value;
+    // Extract just the body below the dashes
+    const parts = content.split("------------------------------------------------------------");
+    const body = parts.length > 1 ? parts[parts.length - 1].trim() : content;
+    navigator.clipboard.writeText(body).then(() => showToast("Email body copied!"));
+  }
+</script>
+
+</body>
+</html>
