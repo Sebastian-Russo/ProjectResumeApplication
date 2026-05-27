@@ -56,3 +56,23 @@ MATCH_NONE = "no_match"             # Not relevant, skip
 # --- Flask ---
 FLASK_PORT = 5000
 FLASK_DEBUG = True
+
+# --- Classification labels ---
+MATCH_HAS_CAREERS = "has_careers"
+MATCH_NO_CAREERS = "no_careers"
+MATCH_IGNORE = "ignore"
+
+# --- Ignore list ---
+IGNORE_LIST = [
+    "NeuraFlash",
+    "Accenture",
+    "InterVision Systems",
+    "NWN Corporation",
+    "CloudCookies",
+    "Global Technology Solutions Inc.",
+    "TTEC Digital",
+    "Cisco Systems",
+    "CXBuilder.ai",
+    "Leidos",
+    "Vibratech",
+]

@@ -1,9 +1,3 @@
-# email_writer.py — Uses Claude to draft outreach emails for each matched company
-# Think of this like a ghostwriter who reads your resume and the company's job post,
-# then writes a tailored letter on your behalf. For direct matches they reference
-# the specific role; for general matches they write a warm cold-outreach email.
-# You review and approve before anything gets sent.
-
 import csv
 import json
 import os
@@ -11,122 +5,105 @@ import time
 from anthropic import Anthropic
 from config import (
     ANTHROPIC_API_KEY, CLAUDE_MODEL,
-    PARTNERS_CLASSIFIED_FILE, EMAILS_DRAFTED_FILE,
-    OUTPUT_EMAILS_DIR, PROFILE_DIR,
-    MATCH_DIRECT, MATCH_GENERAL
+    PARTNERS_CLASSIFIED_FILE,
+    OUTPUT_EMAILS_DIR,
+    MATCH_HAS_CAREERS, MATCH_NO_CAREERS, MATCH_IGNORE
 )
 
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
+RESUME_SUMMARY = """
+Name: Sebastian Russo
+Title: AWS Cloud Developer — Amazon Connect & AWS Serverless
+Location: Bethlehem, PA
+Email: russo.sebastian@gmail.com
 
-def load_profile() -> str:
-    profile_path = os.path.join(PROFILE_DIR, "profile.txt")
-    with open(profile_path, "r", encoding="utf-8") as f:
-        return f.read().strip()
+4+ years specialized experience building Amazon Connect contact center solutions
+and serverless AWS architectures. Deep expertise in Lex V2 bot design, Lambda
+integrations, CDK infrastructure, and end-to-end IVR development. Delivered
+high-volume enterprise call center systems for government (SSA) and commercial
+clients (Amazon ProServe satellite/telecom). Currently expanding into agentic AI
+using Bedrock, Claude, and multi-agent orchestration.
+
+Key skills: Amazon Connect, Lambda, Lex V2, API Gateway, DynamoDB, CDK,
+CloudFormation, Step Functions, Kinesis, QuickSight, CloudWatch, Python,
+JavaScript/TypeScript, ReactJS. Public Trust clearance. 4x AWS certified.
+"""
+
+BODY_TEMPLATE = """I came across {company_name} in the AWS Partner directory and wanted to reach out directly about potential opportunities on your AWS Connect team.
+
+I'm an AWS Cloud Developer with over 4 years of specialized experience building and implementing Amazon Connect contact center solutions. My expertise spans serverless architectures, conversational patterns with Lex V2, and full-stack integrations using Lambda, DynamoDB, S3, Athena, and QuickSight. I've delivered high-volume contact center systems for clients including the Social Security Administration and an Amazon ProServe satellite/telecom engagement — both involving complex IVR flows, self-service bots, and real-time monitoring pipelines.
+
+{personalized_line}
+
+My resume is attached. I'd welcome the chance to connect with your hiring manager or technical lead — even if there isn't a current opening, I'm happy to be kept in mind for future needs.
+
+Best,
+Sebastian Russo
+russo.sebastian@gmail.com
+484-326-9897
+linkedin.com/in/sebastian-russo-2054565a"""
 
 
-def draft_email(partner: dict, profile: str) -> dict:
+def draft_email(partner: dict) -> dict:
     """
-    Drafts a subject line + email body for one company.
-    Returns dict with: subject, body, email_to
+    Uses Claude to generate one personalized sentence about the company,
+    then slots it into the body template.
+    Returns dict with subject, body, email_to.
     """
-
-    classification = partner.get("classification", "")
-    company_name = partner.get("name", "the company")
-    jobs_found = partner.get("jobs_found", "")
-    relevant_jobs = partner.get("relevant_jobs", "")
+    company_name = partner.get("name", "your company")
     contact_email = partner.get("contact_email", "")
     description = partner.get("description", "")
+    career_page_url = partner.get("career_page_url", "")
+    classification = partner.get("classification", "")
 
-    # Tell Claude which mode we're in so it adjusts the angle
-    if classification == MATCH_DIRECT:
-        mode_instruction = f"""
-This company has specific relevant job listings: {relevant_jobs or jobs_found}
-Write a targeted application email referencing the specific role(s) found.
-Open by naming the role you're applying for. Be direct and confident.
-"""
-    else:
-        mode_instruction = f"""
-No specific job listing was found, but this company works with Amazon Connect / AWS.
-Write a warm cold-outreach email expressing interest in potential opportunities.
-Don't mention a specific role — instead express interest in their Connect/AWS work
-and open the door for a conversation.
-"""
+    # Ask Claude for just one personalized sentence
+    context = f"Company: {company_name}\nDescription: {description}\nCareer page: {career_page_url}"
 
-    prompt = f"""You are writing a job outreach email on behalf of a candidate.
+    prompt = f"""Write exactly one sentence (20-35 words) personalizing an outreach email to this AWS partner company.
+The sentence should reference something specific about what they do with AWS/Amazon Connect if possible,
+or simply note that their work aligns with the candidate's background.
+Do not start with "I" and do not use generic phrases like "I was impressed by".
+Just output the single sentence, nothing else.
 
---- CANDIDATE PROFILE ---
-{profile}
---- END PROFILE ---
-
---- COMPANY ---
-Name: {company_name}
-Description: {description}
-Contact: {contact_email}
---- END COMPANY ---
-
---- INSTRUCTIONS ---
-{mode_instruction}
-
-Guidelines:
-- Subject line should be specific, not generic ("Experienced Amazon Connect Developer — [Role]" not "Job Inquiry")
-- 3-4 short paragraphs max
-- Paragraph 1: who you are and why you're reaching out (mention the role or their Connect work)
-- Paragraph 2: most relevant experience for THIS company (pick from profile — don't list everything)
-- Paragraph 3: what you bring / why it's a fit
-- Paragraph 4: brief call to action — ask for a call or to send more materials
-- Sign off as Sebastian Russo with email russo.sebastian@gmail.com
-- Professional but human — not stiff corporate speak
-- Do NOT use filler phrases like "I am writing to express my interest" or "I came across your posting"
-
-Respond ONLY with a JSON object. No preamble, no markdown backticks.
-{{
-  "subject": "email subject line here",
-  "body": "full email body here with newlines as \\n"
-}}
-"""
-
-    response = client.messages.create(
-        model=CLAUDE_MODEL,
-        max_tokens=1000,
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    raw = response.content[0].text.strip()
+{context}"""
 
     try:
-        result = json.loads(raw)
-    except json.JSONDecodeError:
-        cleaned = raw[raw.find("{"):raw.rfind("}") + 1]
-        result = json.loads(cleaned)
+        response = client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=100,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        personalized_line = response.content[0].text.strip()
+    except Exception:
+        personalized_line = f"Your work as an AWS Connect partner aligns closely with my background."
+
+    body = BODY_TEMPLATE.format(
+        company_name=company_name,
+        personalized_line=personalized_line
+    )
+
+    subject = f"Amazon Connect Developer — Exploring Opportunities at {company_name}"
 
     return {
-        "subject": result.get("subject", ""),
-        "body": result.get("body", ""),
-        "email_to": contact_email
+        "subject": subject,
+        "body": body,
+        "email_to": contact_email,
+        "personalized_line": personalized_line
     }
 
 
 def save_email_to_file(partner: dict, email: dict) -> str:
-    """
-    Saves each drafted email as a .txt file in output/emails/
-    Named by company so they're easy to find and review.
-    Returns the file path.
-    """
     os.makedirs(OUTPUT_EMAILS_DIR, exist_ok=True)
-
-    # Sanitize company name for use as filename
     safe_name = "".join(c if c.isalnum() or c in " -_" else "" for c in partner["name"])
     safe_name = safe_name.strip().replace(" ", "_")[:60]
-    filename = f"{safe_name}.txt"
-    filepath = os.path.join(OUTPUT_EMAILS_DIR, filename)
+    filepath = os.path.join(OUTPUT_EMAILS_DIR, f"{safe_name}.txt")
 
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(f"TO: {email['email_to']}\n")
         f.write(f"SUBJECT: {email['subject']}\n")
-        f.write(f"CLASSIFICATION: {partner.get('classification', '')}\n")
         f.write(f"COMPANY: {partner['name']}\n")
-        f.write(f"WEBSITE: {partner.get('website', '')}\n")
+        f.write(f"CLASSIFICATION: {partner.get('classification', '')}\n")
         f.write("-" * 60 + "\n\n")
         f.write(email["body"])
 
@@ -134,69 +111,59 @@ def save_email_to_file(partner: dict, email: dict) -> str:
 
 
 def run_email_writer():
-    """
-    Reads classified CSV, drafts emails for all direct and general matches,
-    saves each to output/emails/ and updates the CSV with email_drafted = yes.
-    """
     if not os.path.exists(PARTNERS_CLASSIFIED_FILE):
-        print(f"Classified file not found: {PARTNERS_CLASSIFIED_FILE}. Run classifier first.")
+        print(f"Classified file not found. Run classifier first.")
         return
-
-    profile = load_profile()
-    print(f"Profile loaded. Drafting emails...\n")
 
     with open(PARTNERS_CLASSIFIED_FILE, "r", encoding="utf-8") as f:
         partners = list(csv.DictReader(f))
 
-    # Add column if missing
     for p in partners:
         p.setdefault("email_drafted", "no")
         p.setdefault("email_file", "")
 
-    total_drafted = 0
-    skipped = 0
+    total = skipped = errors = 0
 
     for i, partner in enumerate(partners):
         classification = partner.get("classification", "")
 
-        # Only write emails for matches
-        if classification not in [MATCH_DIRECT, MATCH_GENERAL]:
+        if classification == MATCH_IGNORE:
             continue
 
-        # Skip already drafted
+        if classification not in [MATCH_HAS_CAREERS, MATCH_NO_CAREERS]:
+            continue
+
         if partner.get("email_drafted") == "yes":
             skipped += 1
             continue
 
-        print(f"[{i+1}/{len(partners)}] Drafting: {partner['name']} ({classification})")
+        print(f"[{i+1}/{len(partners)}] Drafting: {partner['name']}")
 
         try:
-            email = draft_email(partner, profile)
+            email = draft_email(partner)
             filepath = save_email_to_file(partner, email)
-
             partner["email_drafted"] = "yes"
             partner["email_file"] = filepath
-            total_drafted += 1
-
-            print(f"    Subject: {email['subject']}")
-            print(f"    Saved to: {filepath}")
+            total += 1
+            print(f"    {email['personalized_line'][:80]}")
 
         except Exception as e:
-            print(f"    Error drafting for {partner['name']}: {e}")
+            print(f"    Error: {e}")
+            errors += 1
 
-        # Save progress every 20
-        if total_drafted % 20 == 0 and total_drafted > 0:
+        if total % 20 == 0 and total > 0:
             _save_progress(partners)
-            print(f"  --- Progress saved ({total_drafted} drafted) ---\n")
+            print(f"  --- Progress saved ({total} drafted) ---\n")
 
-        time.sleep(0.5)
+        time.sleep(0.3)
 
     _save_progress(partners)
 
     print(f"\n--- Email Drafting Complete ---")
-    print(f"Emails drafted: {total_drafted}")
-    print(f"Skipped (already done): {skipped}")
-    print(f"Emails saved to: {OUTPUT_EMAILS_DIR}")
+    print(f"Drafted:  {total}")
+    print(f"Skipped:  {skipped}")
+    print(f"Errors:   {errors}")
+    print(f"Saved to: {OUTPUT_EMAILS_DIR}")
 
 
 def _save_progress(partners: list[dict]) -> None:

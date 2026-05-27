@@ -1,20 +1,18 @@
 import sys
 sys.path.insert(0, '.')
 import csv
-from src.classifier.job_classifier import load_profile, classify_company
+from src.writer.email_writer import draft_email
 
-profile = load_profile()
-
-with open('data/raw/partners_raw.csv') as f:
+with open('data/processed/partners_classified.csv') as f:
     partners = list(csv.DictReader(f))
 
-# Test on first 5
-for partner in partners[:5]:
-    print(f"\n--- {partner['name']} ---")
-    try:
-        result = classify_company(partner, profile)
-        print(f"  Classification: {result['classification']}")
-        print(f"  Reasoning:      {result['reasoning']}")
-        print(f"  Email:          {result['contact_email']}")
-    except Exception as e:
-        print(f"  ERROR: {e}")
+# Grab 5 that aren't ignored
+test = [p for p in partners if p['classification'] != 'ignore'][:5]
+
+for partner in test:
+    print(f"\n--- {partner['name']} ({partner['classification']}) ---")
+    email = draft_email(partner)
+    print(f"TO:      {email['email_to']}")
+    print(f"SUBJECT: {email['subject']}")
+    print(f"\n{email['body']}")
+    print("-" * 60)
