@@ -1,8 +1,3 @@
-# partner_scraper.py — Pulls all AWS Connect partners from the directory
-# Think of this like a librarian going through a card catalog:
-# we flip through every page of results, writing down each company's
-# name and website before moving to the next page.
-
 import csv
 import time
 import os
@@ -14,16 +9,14 @@ from config import (
 
 
 def scrape_partner_directory() -> list[dict]:
-    """
-    Navigates the AWS partner search, scrolls/paginates through all results,
-    and extracts company name + website for each partner.
-    Returns a list of dicts: [{name, website, location, description}, ...]
-    """
     partners = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
+        page = context.new_page()
         page.set_default_timeout(PAGE_TIMEOUT)
 
         print("Loading AWS Partner Directory...")
@@ -32,20 +25,17 @@ def scrape_partner_directory() -> list[dict]:
             wait_until="networkidle"
         )
 
-        # The directory is a React SPA — we need to wait for cards to render
-        page.wait_for_selector("[class*='PartnerCard'], [class*='partner-card'], .awsui-cards-card", timeout=15000)
+        page.wait_for_timeout(5000)
+        page.wait_for_selector(".psf-partner-search-details-card__card", timeout=20000)
 
         page_num = 1
+        total_pages = 68
 
         while True:
             print(f"  Scraping page {page_num}...")
 
-            # Grab all partner cards currently visible
-            cards = page.query_selector_all("[class*='PartnerCard'], [class*='partner-card']")
-
-            if not cards:
-                # Fallback: try generic card selectors
-                cards = page.query_selector_all("li[class*='card'], div[class*='result']")
+            cards = page.query_selector_all(".psf-partner-search-details-card__card")
+            print(f"    Found {len(cards)} cards on this page")
 
             for card in cards:
                 try:
@@ -56,89 +46,65 @@ def scrape_partner_directory() -> list[dict]:
                     print(f"    Warning: couldn't parse a card — {e}")
                     continue
 
-            # Check for a "Next" pagination button
-            next_btn = page.query_selector("button[aria-label='Next page'], [class*='pagination'] button:last-child")
+            # Save every 10 pages so a stop doesn't lose everything
+            if page_num % 10 == 0:
+                save_partners_to_csv(partners)
+                print(f"  --- Progress saved ({len(partners)} partners so far) ---")
 
-            if next_btn and next_btn.is_enabled():
-                next_btn.click()
-                time.sleep(SCRAPE_DELAY)
-                page.wait_for_load_state("networkidle")
-                page_num += 1
-            else:
-                print(f"  No more pages. Done at page {page_num}.")
+            if page_num >= total_pages:
+                print(f"  Reached last page ({total_pages}). Done.")
                 break
+
+            next_btn = page.query_selector(".pagination-right-arrow button")
+            if not next_btn:
+                print(f"  No next button found. Done.")
+                break
+
+            next_btn.click()
+            page_num += 1
+            time.sleep(SCRAPE_DELAY)
+            page.wait_for_selector(".psf-partner-search-details-card__card", timeout=15000)
 
         browser.close()
 
-    print(f"Found {len(partners)} partners total.")
+    print(f"\nFound {len(partners)} partners total.")
     return partners
 
 
 def extract_card_data(card) -> dict:
-    """
-    Pulls structured data out of a single partner card element.
-    We try multiple selector patterns because AWS's React classes
-    can be minified/hashed — defensive parsing is key here.
-    """
     name = ""
-    website = ""
-    description = ""
-    location = ""
+    learn_more_url = ""
 
-    # Try to get company name
-    for selector in ["h3", "h2", "[class*='name']", "[class*='title']", "strong"]:
-        el = card.query_selector(selector)
-        if el:
-            name = el.inner_text().strip()
-            if name:
-                break
+    el = card.query_selector(".psf-partner-search-details-card__title")
+    if el:
+        name = el.inner_text().strip()
 
-    # Try to get website URL from any anchor tag on the card
-    for selector in ["a[href*='http']", "a[class*='website']", "a[class*='url']"]:
-        el = card.query_selector(selector)
-        if el:
-            href = el.get_attribute("href") or ""
-            # Filter out AWS's own internal links
-            if href and "amazonaws.com" not in href and "amazon.com" not in href:
-                website = href.strip()
-                break
-
-    # Try to get description text
-    for selector in ["p", "[class*='description']", "[class*='summary']"]:
-        el = card.query_selector(selector)
-        if el:
-            description = el.inner_text().strip()[:300]  # Cap at 300 chars
-            if description:
-                break
-
-    # Try location
-    for selector in ["[class*='location']", "[class*='city']", "[class*='region']"]:
-        el = card.query_selector(selector)
-        if el:
-            location = el.inner_text().strip()
-            if location:
-                break
+    el = card.query_selector(".psf-partner-search-details-card__learnMore a")
+    if el:
+        href = el.get_attribute("href") or ""
+        if href.startswith("/"):
+            learn_more_url = f"https://partners.amazonaws.com{href}"
+        else:
+            learn_more_url = href
 
     return {
         "name": name,
-        "website": website,
-        "location": location,
-        "description": description,
-        "career_page_url": "",      # filled in next step
-        "jobs_found": "",           # filled in next step
-        "contact_email": "",        # filled in next step
-        "classification": "",       # filled by classifier
+        "learn_more_url": learn_more_url,
+        "website": "",
+        "career_page_url": "",
+        "jobs_found": "",
+        "contact_email": "",
+        "classification": "",
         "email_drafted": "no",
         "status": "pending"
     }
 
 
 def save_partners_to_csv(partners: list[dict]) -> None:
-    """Saves the raw partner list to CSV so we don't have to re-scrape."""
     os.makedirs(DATA_RAW_DIR, exist_ok=True)
 
     fieldnames = [
-        "name", "website", "location", "description",
+        "name", "learn_more_url", "website",
         "career_page_url", "jobs_found", "contact_email",
         "classification", "email_drafted", "status"
     ]
