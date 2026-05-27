@@ -3,3 +3,5 @@ playwright
 python-dotenv
 flask
 pandas
+beautifulsoup4
+requests
