@@ -126,7 +126,6 @@ def is_same_domain(base_url: str, target_url: str) -> bool:
     target = urlparse(target_url).netloc.replace("www.", "")
     return base == target or target == ""
 
-
 def run_career_finder():
     if not os.path.exists(PARTNERS_RAW_FILE):
         print(f"No raw partners file found at {PARTNERS_RAW_FILE}. Run partner_scraper.py first.")
@@ -137,15 +136,26 @@ def run_career_finder():
 
     print(f"Processing {len(partners)} companies...\n")
 
+    BATCH_SIZE = 50  # restart browser every 50 companies to prevent memory leak
+
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        )
-        page = context.new_page()
-        page.set_default_timeout(PAGE_TIMEOUT)
+        browser = None
+        page = None
 
         for i, partner in enumerate(partners):
+
+            # Restart browser every BATCH_SIZE companies
+            if i % BATCH_SIZE == 0:
+                if browser:
+                    browser.close()
+                browser = p.chromium.launch(headless=True)
+                context = browser.new_context(
+                    user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                )
+                page = context.new_page()
+                page.set_default_timeout(PAGE_TIMEOUT)
+                print(f"  --- Browser restarted at company {i+1} ---\n")
+
             # Skip already processed
             if partner.get("status") == "scraped":
                 print(f"[{i+1}/{len(partners)}] Skipping {partner['name']} (already done)")
@@ -153,7 +163,6 @@ def run_career_finder():
 
             print(f"[{i+1}/{len(partners)}] {partner['name']}")
 
-            # Step 1: resolve real website from AWS partner detail page
             website = partner.get("website", "").strip()
             if not website:
                 website = get_company_website(page, partner["learn_more_url"], partner["name"])
@@ -166,30 +175,27 @@ def run_career_finder():
 
             print(f"    Website: {website}")
 
-            # Step 2: find careers page
             career_url = find_career_page(page, website)
             partner["career_page_url"] = career_url
             print(f"    Careers: {career_url or 'not found'}")
 
-            # Step 3: find contact email
             contact_email = find_contact_email(page, website)
             partner["contact_email"] = contact_email
             print(f"    Email:   {contact_email}")
 
             partner["status"] = "scraped"
 
-            # Save every 10 companies
             if (i + 1) % 10 == 0:
                 _save_progress(partners)
                 print(f"  --- Progress saved ({i+1}/{len(partners)}) ---\n")
 
             time.sleep(SCRAPE_DELAY)
 
-        browser.close()
+        if browser:
+            browser.close()
 
     _save_progress(partners)
     print(f"\nDone.")
-
 
 def _save_progress(partners: list[dict]) -> None:
     fieldnames = list(partners[0].keys())
