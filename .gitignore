@@ -6,3 +6,4 @@ data/raw/
 data/processed/
 output/
 *.log
+gmail_token.json
