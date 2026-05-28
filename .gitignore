@@ -7,3 +7,4 @@ data/processed/
 output/
 *.log
 gmail_token.json
+gmail_token.pickle
