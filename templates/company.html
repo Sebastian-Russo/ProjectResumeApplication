@@ -3,255 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ partner.name }} — Application</title>
+  <title>{{ partner.name }}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f1117;
-      color: #e2e8f0;
-      min-height: 100vh;
-    }
-
-    header {
-      background: #1a1d27;
-      border-bottom: 1px solid #2d3148;
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .back-btn {
-      color: #64748b;
-      text-decoration: none;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.15s;
-    }
-
+    header { background: #1a1d27; border-bottom: 1px solid #2d3148; padding: 14px 32px; display: flex; align-items: center; gap: 14px; }
+    .back-btn { color: #64748b; text-decoration: none; font-size: 0.85rem; transition: color 0.15s; }
     .back-btn:hover { color: #a78bfa; }
+    header h1 { font-size: 1rem; font-weight: 600; flex: 1; }
 
-    header h1 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      flex: 1;
-    }
+    .badge { font-size: 0.68rem; font-weight: 600; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .badge.has_careers { background: #34d39920; color: #34d399; border: 1px solid #34d39940; }
+    .badge.no_careers  { background: #fbbf2420; color: #fbbf24; border: 1px solid #fbbf2440; }
 
-    .badge {
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
+    .layout { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 57px); }
 
-    .badge.direct_match  { background: #34d39920; color: #34d399; border: 1px solid #34d39940; }
-    .badge.general_match { background: #fbbf2420; color: #fbbf24; border: 1px solid #fbbf2440; }
-    .badge.no_match      { background: #f8717120; color: #f87171; border: 1px solid #f8717140; }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 0;
-      height: calc(100vh - 61px);
-    }
-
-    /* Left panel — company info */
-    .sidebar {
-      background: #13151f;
-      border-right: 1px solid #1e2235;
-      padding: 24px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .info-block h3 {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #64748b;
-      margin-bottom: 8px;
-    }
-
-    .info-block p, .info-block a {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      line-height: 1.5;
-      word-break: break-word;
-    }
-
-    .info-block a {
-      color: #a78bfa;
-      text-decoration: none;
-    }
-
+    .sidebar { background: #13151f; border-right: 1px solid #1e2235; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+    .info-block h3 { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 6px; }
+    .info-block p, .info-block a { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; word-break: break-word; }
+    .info-block a { color: #a78bfa; text-decoration: none; }
     .info-block a:hover { text-decoration: underline; }
 
-    .jobs-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .history-item { font-size: 0.75rem; color: #64748b; padding: 4px 0; border-bottom: 1px solid #1e2235; }
 
-    .job-tag {
-      background: #1a1d27;
-      border: 1px solid #2d3148;
-      border-radius: 4px;
-      padding: 6px 10px;
-      font-size: 0.78rem;
-      color: #94a3b8;
-    }
-
-    /* Status selector */
-    .status-section h3 {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #64748b;
-      margin-bottom: 10px;
-    }
-
-    .status-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .status-btn {
-      padding: 8px 14px;
-      border-radius: 6px;
-      border: 1px solid #2d3148;
-      background: transparent;
-      color: #94a3b8;
-      font-size: 0.82rem;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.15s;
-    }
-
+    .status-section h3 { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 8px; }
+    .status-buttons { display: flex; flex-direction: column; gap: 5px; }
+    .status-btn { padding: 7px 12px; border-radius: 6px; border: 1px solid #2d3148; background: transparent; color: #94a3b8; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.15s; }
     .status-btn:hover { border-color: #a78bfa; color: #a78bfa; }
+    .status-btn.active { border-color: #a78bfa; color: #a78bfa; background: #a78bfa10; }
 
-    .status-btn.active-pending      { border-color: #64748b; color: #94a3b8; background: #94a3b810; }
-    .status-btn.active-applied      { border-color: #60a5fa; color: #60a5fa; background: #60a5fa10; }
-    .status-btn.active-responded    { border-color: #a78bfa; color: #a78bfa; background: #a78bfa10; }
-    .status-btn.active-interviewing { border-color: #34d399; color: #34d399; background: #34d39910; }
-    .status-btn.active-rejected     { border-color: #f87171; color: #f87171; background: #f8717110; }
-    .status-btn.active-not_relevant { border-color: #64748b; color: #64748b; background: #64748b10; }
+    .email-panel { display: flex; flex-direction: column; overflow: hidden; }
+    .email-toolbar { padding: 14px 20px; background: #1a1d27; border-bottom: 1px solid #2d3148; display: flex; align-items: center; gap: 10px; }
+    .email-toolbar span { font-size: 0.8rem; color: #64748b; flex: 1; }
 
-    /* Right panel — email editor */
-    .email-panel {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+    .btn { padding: 7px 16px; border-radius: 6px; border: none; font-size: 0.8rem; cursor: pointer; font-weight: 500; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-save   { background: #2d3148; color: #94a3b8; }
+    .btn-send   { background: #a78bfa; color: #fff; }
+    .btn-copy   { background: #1e2235; color: #94a3b8; border: 1px solid #2d3148; }
+    .btn-reply  { background: #34d399; color: #0f1117; }
 
-    .email-toolbar {
-      padding: 16px 24px;
-      background: #1a1d27;
-      border-bottom: 1px solid #2d3148;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .email-toolbar span {
-      font-size: 0.8rem;
-      color: #64748b;
-      flex: 1;
-    }
-
-    .toolbar-btn {
-      padding: 8px 18px;
-      border-radius: 6px;
-      border: none;
-      font-size: 0.82rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: opacity 0.15s;
-    }
-
-    .toolbar-btn:hover { opacity: 0.85; }
-
-    .btn-save    { background: #2d3148; color: #94a3b8; }
-    .btn-apply   { background: #a78bfa; color: #fff; }
-    .btn-copy    { background: #1e2235; color: #94a3b8; border: 1px solid #2d3148; }
-
-    .email-meta {
-      padding: 14px 24px;
-      background: #13151f;
-      border-bottom: 1px solid #1e2235;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .meta-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.82rem;
-    }
-
-    .meta-label {
-      color: #64748b;
-      min-width: 60px;
-      font-weight: 500;
-    }
-
+    .email-meta { padding: 12px 20px; background: #13151f; border-bottom: 1px solid #1e2235; }
+    .meta-row { display: flex; gap: 10px; font-size: 0.8rem; margin-bottom: 4px; }
+    .meta-label { color: #64748b; min-width: 56px; }
     .meta-value { color: #94a3b8; }
-    .meta-value.email { color: #a78bfa; }
+    .meta-value.email-addr { color: #a78bfa; }
 
-    .email-body-wrap {
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
+    .email-body-wrap { flex: 1; overflow: hidden; }
+    #email-editor { width: 100%; height: 100%; background: #0f1117; color: #e2e8f0; border: none; outline: none; resize: none; padding: 20px; font-size: 0.88rem; line-height: 1.7; font-family: inherit; }
 
-    #email-editor {
-      width: 100%;
-      height: 100%;
-      background: #0f1117;
-      color: #e2e8f0;
-      border: none;
-      outline: none;
-      resize: none;
-      padding: 24px;
-      font-size: 0.9rem;
-      line-height: 1.7;
-      font-family: inherit;
-    }
+    .reply-panel { border-top: 1px solid #2d3148; background: #13151f; padding: 16px 20px; display: none; flex-direction: column; gap: 10px; }
+    .reply-panel.show { display: flex; }
+    .reply-panel h4 { font-size: 0.8rem; color: #64748b; }
+    #reply-editor { background: #1a1d27; border: 1px solid #2d3148; border-radius: 6px; color: #e2e8f0; padding: 12px; font-size: 0.85rem; line-height: 1.6; font-family: inherit; resize: vertical; min-height: 120px; outline: none; }
+    #reply-editor:focus { border-color: #a78bfa; }
+    .reply-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-    .no-email {
-      padding: 60px 24px;
-      text-align: center;
-      color: #64748b;
-      font-size: 0.9rem;
-    }
+    .no-email { padding: 60px; text-align: center; color: #64748b; }
 
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #34d399;
-      color: #0f1117;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      opacity: 0;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #34d399; color: #0f1117; padding: 10px 20px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
     .toast.show { opacity: 1; }
-    .toast.error { background: #f87171; }
+    .toast.error { background: #f87171; color: #fff; }
   </style>
 </head>
 <body>
@@ -259,23 +72,17 @@
 <header>
   <a class="back-btn" href="/">← Back</a>
   <h1>{{ partner.name }}</h1>
-  <span class="badge {{ partner.classification }}">
-    {{ partner.classification | replace('_', ' ') }}
-  </span>
+  <span class="badge {{ partner.classification }}">{{ partner.classification | replace('_', ' ') }}</span>
 </header>
 
 <div class="layout">
 
-  <!-- LEFT: Company info + status -->
   <div class="sidebar">
-
     <div class="info-block">
       <h3>Website</h3>
       {% if partner.website %}
         <a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a>
-      {% else %}
-        <p>—</p>
-      {% endif %}
+      {% else %}<p>—</p>{% endif %}
     </div>
 
     <div class="info-block">
@@ -287,81 +94,61 @@
       <h3>Career Page</h3>
       {% if partner.career_page_url %}
         <a href="{{ partner.career_page_url }}" target="_blank">{{ partner.career_page_url }}</a>
-      {% else %}
-        <p>Not found</p>
-      {% endif %}
+      {% else %}<p>Not found</p>{% endif %}
     </div>
 
-    {% if partner.relevant_jobs or partner.jobs_found %}
+    {% if partner.last_reply %}
     <div class="info-block">
-      <h3>Relevant Jobs Found</h3>
-      <div class="jobs-list">
-        {% set jobs = (partner.relevant_jobs or partner.jobs_found).split(' | ') %}
-        {% for job in jobs %}
-          {% if job.strip() %}
-            <div class="job-tag">{{ job.strip() }}</div>
-          {% endif %}
-        {% endfor %}
-      </div>
+      <h3>Last Reply</h3>
+      <p>{{ partner.last_reply[:16] | replace('T', ' ') }}</p>
+      <p style="margin-top:4px; color: {% if partner.response_type == 'positive' %}#34d399{% elif partner.response_type == 'negative' %}#f87171{% else %}#94a3b8{% endif %}">
+        {{ partner.response_type or '—' }}
+      </p>
     </div>
     {% endif %}
 
-    {% if partner.reasoning %}
+    {% if partner.status_history %}
     <div class="info-block">
-      <h3>AI Reasoning</h3>
-      <p>{{ partner.reasoning }}</p>
+      <h3>Status History</h3>
+      {% for entry in partner.status_history.split('|') %}
+        {% if entry.strip() %}
+        <div class="history-item">{{ entry | replace(':', ' — ') }}</div>
+        {% endif %}
+      {% endfor %}
     </div>
     {% endif %}
 
-    <div class="info-block">
-      <h3>Description</h3>
-      <p>{{ partner.description or '—' }}</p>
-    </div>
-
-    <!-- Status selector -->
     <div class="status-section">
-      <h3>Application Status</h3>
+      <h3>Status</h3>
       <div class="status-buttons">
-        {% for s in ['pending', 'applied', 'responded', 'interviewing', 'rejected', 'not_relevant'] %}
-        <button
-          class="status-btn {% if (partner.status or 'pending') == s %}active-{{ s }}{% endif %}"
-          onclick="setStatus('{{ s }}')"
-        >
-          {% if s == 'pending' %}⏳{% elif s == 'applied' %}📤{% elif s == 'responded' %}💬{% elif s == 'interviewing' %}🎯{% elif s == 'rejected' %}❌{% else %}🚫{% endif %}
-          {{ s | replace('_', ' ') | title }}
+        {% for s in ['sent', 'needs_reply', 'reply_sent', 'archived:rejected', 'archived:bad_email', 'archived:no_response'] %}
+        <button class="status-btn {% if partner.status == s %}active{% endif %}" onclick="setStatus('{{ s }}')">
+          {{ s | replace('_', ' ') | replace(':', ' — ') | title }}
         </button>
         {% endfor %}
       </div>
     </div>
-
   </div>
 
-  <!-- RIGHT: Email editor -->
   <div class="email-panel">
 
     {% if email_content %}
-
     <div class="email-toolbar">
-      <span>Draft email — edit freely before sending</span>
-      <button class="toolbar-btn btn-copy" onclick="copyEmail()">Copy</button>
-      <button class="toolbar-btn btn-save" onclick="saveEmail()">Save Edits</button>
-      <button class="toolbar-btn btn-apply" onclick="markApplied()">Mark as Applied ✓</button>
+      <span>Drafted email</span>
+      <button class="btn btn-copy" onclick="copyEmail()">Copy</button>
+      <button class="btn btn-save" onclick="saveEmail()">Save</button>
+      {% if partner.status == 'needs_reply' %}
+      <button class="btn btn-reply" onclick="toggleReply()">Draft Reply ↓</button>
+      {% endif %}
     </div>
 
-    <!-- Parse TO/SUBJECT out of the file header for display -->
     <div class="email-meta">
       {% set lines = email_content.split('\n') %}
       {% for line in lines[:4] %}
         {% if line.startswith('TO:') %}
-        <div class="meta-row">
-          <span class="meta-label">To:</span>
-          <span class="meta-value email">{{ line[3:].strip() }}</span>
-        </div>
+        <div class="meta-row"><span class="meta-label">To:</span><span class="meta-value email-addr">{{ line[3:].strip() }}</span></div>
         {% elif line.startswith('SUBJECT:') %}
-        <div class="meta-row">
-          <span class="meta-label">Subject:</span>
-          <span class="meta-value">{{ line[8:].strip() }}</span>
-        </div>
+        <div class="meta-row"><span class="meta-label">Subject:</span><span class="meta-value">{{ line[8:].strip() }}</span></div>
         {% endif %}
       {% endfor %}
     </div>
@@ -370,13 +157,19 @@
       <textarea id="email-editor">{{ email_content }}</textarea>
     </div>
 
-    {% else %}
-    <div class="no-email">
-      <p>No email drafted for this company.</p>
-      <p style="margin-top:8px; font-size:0.8rem;">
-        Run the email writer for {{ partner.classification }} matches to generate one.
-      </p>
+    {% if partner.status == 'needs_reply' %}
+    <div class="reply-panel" id="reply-panel">
+      <h4>Your reply to {{ partner.name }}</h4>
+      <textarea id="reply-editor" placeholder="Write your reply here..."></textarea>
+      <div class="reply-actions">
+        <button class="btn btn-save" onclick="toggleReply()">Cancel</button>
+        <button class="btn btn-send" onclick="sendReply()">Send Reply</button>
+      </div>
     </div>
+    {% endif %}
+
+    {% else %}
+    <div class="no-email"><p>No email drafted for this company.</p></div>
     {% endif %}
 
   </div>
@@ -402,7 +195,7 @@
       body: JSON.stringify({ index: companyIndex, content })
     });
     const data = await res.json();
-    data.success ? showToast("Email saved.") : showToast("Save failed.", true);
+    data.success ? showToast("Saved.") : showToast("Save failed.", true);
   }
 
   async function setStatus(status) {
@@ -414,30 +207,39 @@
     const data = await res.json();
     if (data.success) {
       showToast(`Status → ${status}`);
-      // Update button highlights without full reload
-      document.querySelectorAll(".status-btn").forEach(btn => {
-        btn.className = "status-btn";
-        if (btn.textContent.toLowerCase().includes(status.replace("_", " "))) {
-          btn.classList.add(`active-${status}`);
-        }
+      document.querySelectorAll(".status-btn").forEach(b => {
+        b.classList.toggle("active", b.textContent.toLowerCase().includes(status.replace(/[_:]/g, " ").toLowerCase()));
       });
-    } else {
-      showToast("Update failed.", true);
     }
-  }
-
-  async function markApplied() {
-    await saveEmail();
-    await setStatus("applied");
-    showToast("Saved and marked as applied ✓");
   }
 
   function copyEmail() {
     const content = document.getElementById("email-editor").value;
-    // Extract just the body below the dashes
     const parts = content.split("------------------------------------------------------------");
     const body = parts.length > 1 ? parts[parts.length - 1].trim() : content;
-    navigator.clipboard.writeText(body).then(() => showToast("Email body copied!"));
+    navigator.clipboard.writeText(body).then(() => showToast("Copied!"));
+  }
+
+  function toggleReply() {
+    const panel = document.getElementById("reply-panel");
+    panel.classList.toggle("show");
+  }
+
+  async function sendReply() {
+    const body = document.getElementById("reply-editor").value;
+    if (!body.trim()) { showToast("Reply is empty.", true); return; }
+    const res = await fetch("/api/send_reply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ index: companyIndex, body })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast("Reply sent!");
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      showToast("Send failed: " + data.error, true);
+    }
   }
 </script>
 
