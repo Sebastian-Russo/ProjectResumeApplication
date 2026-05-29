@@ -8,189 +8,448 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
 
-    header { background: #1a1d27; border-bottom: 1px solid #2d3148; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
-    header h1 { font-size: 1.1rem; font-weight: 600; color: #a78bfa; }
-    .header-actions { display: flex; gap: 10px; align-items: center; }
+    /* Header */
+    header { background: #1a1d27; border-bottom: 1px solid #2d3148; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    header h1 { font-size: 1rem; font-weight: 600; color: #a78bfa; white-space: nowrap; }
+    .header-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
-    .btn { padding: 8px 16px; border-radius: 6px; border: none; font-size: 0.82rem; cursor: pointer; font-weight: 500; transition: opacity 0.15s; }
-    .btn:hover { opacity: 0.85; }
-    .btn-primary { background: #a78bfa; color: #fff; }
-    .btn-secondary { background: #2d3148; color: #94a3b8; }
-    .btn-warning { background: #fbbf24; color: #1a1200; }
-    .btn-danger { background: #f87171; color: #fff; }
-    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+    .btn { padding: 6px 12px; border-radius: 5px; border: none; font-size: 0.73rem; cursor: pointer; font-weight: 500; transition: opacity 0.15s; white-space: nowrap; }
+    .btn:hover { opacity: 0.82; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary  { background: #a78bfa; color: #fff; }
+    .btn-green    { background: #34d399; color: #0a1a12; }
+    .btn-teal     { background: #2dd4bf; color: #021a18; }
+    .btn-orange   { background: #fb923c; color: #1a0a00; }
+    .btn-yellow   { background: #fbbf24; color: #1a1000; }
+    .btn-red      { background: #f87171; color: #1a0000; }
+    .btn-ghost    { background: #2d3148; color: #94a3b8; }
+    .btn-sm       { padding: 4px 9px; font-size: 0.68rem; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; padding: 20px 32px; background: #13151f; border-bottom: 1px solid #1e2235; }
-    .stat-card { background: #1a1d27; border: 1px solid #2d3148; border-radius: 8px; padding: 14px 16px; cursor: pointer; text-decoration: none; transition: border-color 0.15s; }
-    .stat-card:hover { border-color: #a78bfa; }
-    .stat-card.active { border-color: #a78bfa; background: #1e1b38; }
-    .stat-number { font-size: 1.8rem; font-weight: 700; display: block; }
-    .stat-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
-    .c-purple .stat-number { color: #a78bfa; }
-    .c-green .stat-number { color: #34d399; }
-    .c-yellow .stat-number { color: #fbbf24; }
-    .c-blue .stat-number { color: #60a5fa; }
-    .c-red .stat-number { color: #f87171; }
-    .c-gray .stat-number { color: #94a3b8; }
-    .c-orange .stat-number { color: #fb923c; }
+    .divider { width: 1px; height: 20px; background: #2d3148; margin: 0 2px; }
 
-    .toolbar { padding: 14px 32px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #1e2235; flex-wrap: wrap; }
-    .filter-btn { padding: 5px 14px; border-radius: 20px; border: 1px solid #2d3148; background: transparent; color: #94a3b8; font-size: 0.78rem; cursor: pointer; text-decoration: none; transition: all 0.15s; }
-    .filter-btn:hover, .filter-btn.active { background: #a78bfa20; border-color: #a78bfa; color: #a78bfa; }
-    .search-input { margin-left: auto; background: #1a1d27; border: 1px solid #2d3148; border-radius: 6px; padding: 6px 12px; color: #e2e8f0; font-size: 0.82rem; outline: none; width: 200px; }
+    /* Stats */
+    .stats-wrap { background: #13151f; border-bottom: 1px solid #1e2235; }
+    .stats-main { display: flex; gap: 8px; flex-wrap: wrap; padding: 14px 24px 10px; }
+
+    .stat { background: #1a1d27; border: 1px solid #2d3148; border-radius: 7px; padding: 9px 14px; min-width: 80px; text-align: center; cursor: pointer; text-decoration: none; transition: border-color 0.15s; }
+    .stat:hover { border-color: #a78bfa; }
+    .stat.active { border-color: #a78bfa; background: #1e1b38; }
+    .stat-num { font-size: 1.4rem; font-weight: 700; display: block; }
+    .stat-lbl { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+    .c-purple .stat-num { color: #a78bfa; }
+    .c-blue   .stat-num { color: #60a5fa; }
+    .c-green  .stat-num { color: #34d399; }
+    .c-yellow .stat-num { color: #fbbf24; }
+    .c-red    .stat-num { color: #f87171; }
+    .c-orange .stat-num { color: #fb923c; }
+    .c-teal   .stat-num { color: #2dd4bf; }
+    .c-pink   .stat-num { color: #f472b6; }
+    .c-gray   .stat-num { color: #94a3b8; }
+
+    .stats-detail { display: flex; gap: 20px; flex-wrap: wrap; padding: 10px 24px 14px; border-top: 1px solid #1e2235; }
+    .detail-group h4 { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; color: #3d4f66; margin-bottom: 5px; }
+    .detail-item { font-size: 0.72rem; color: #64748b; display: flex; gap: 6px; align-items: center; margin-bottom: 3px; }
+    .dc { background: #1e2235; border-radius: 3px; padding: 1px 6px; font-size: 0.67rem; color: #a78bfa; font-weight: 600; min-width: 24px; text-align: center; }
+    .dc.green { color: #34d399; }
+    .dc.orange { color: #fb923c; }
+    .dc.red { color: #f87171; }
+
+    .rate-badge { background: #a78bfa20; border: 1px solid #a78bfa30; border-radius: 5px; padding: 6px 12px; font-size: 0.72rem; color: #a78bfa; }
+    .rate-badge span { font-size: 1.1rem; font-weight: 700; display: block; }
+
+    /* Due today */
+    .due-today-bar { background: #fbbf2408; border-bottom: 1px solid #fbbf2420; padding: 8px 24px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .due-lbl { font-size: 0.68rem; color: #fbbf24; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+    .due-pill { font-size: 0.68rem; background: #fbbf2415; border: 1px solid #fbbf2430; border-radius: 4px; padding: 2px 8px; color: #fbbf24; text-decoration: none; }
+    .due-pill:hover { background: #fbbf2425; }
+
+    /* Toolbar */
+    .toolbar { padding: 10px 24px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid #1e2235; }
+    .filter-btn { padding: 4px 11px; border-radius: 20px; border: 1px solid #2d3148; background: transparent; color: #94a3b8; font-size: 0.72rem; cursor: pointer; text-decoration: none; transition: all 0.15s; white-space: nowrap; }
+    .filter-btn:hover { background: #a78bfa15; border-color: #a78bfa; color: #a78bfa; }
+    .filter-btn.active { background: #a78bfa20; border-color: #a78bfa; color: #a78bfa; }
+    .filter-btn.c-teal:hover, .filter-btn.c-teal.active { background: #2dd4bf15; border-color: #2dd4bf; color: #2dd4bf; }
+    .filter-btn.c-orange:hover, .filter-btn.c-orange.active { background: #fb923c15; border-color: #fb923c; color: #fb923c; }
+    .filter-btn.c-red:hover, .filter-btn.c-red.active { background: #f8717115; border-color: #f87171; color: #f87171; }
+    .filter-btn.c-yellow:hover, .filter-btn.c-yellow.active { background: #fbbf2415; border-color: #fbbf24; color: #fbbf24; }
+    .filter-btn.tag-pill { background: #2d314820; }
+    .count-lbl { font-size: 0.68rem; color: #3d4f66; }
+    .search-input { margin-left: auto; background: #1a1d27; border: 1px solid #2d3148; border-radius: 5px; padding: 4px 9px; color: #e2e8f0; font-size: 0.73rem; outline: none; width: 160px; }
     .search-input:focus { border-color: #a78bfa; }
-    .count-label { font-size: 0.78rem; color: #64748b; margin-left: 8px; }
 
-    .company-list { padding: 0 32px 40px; display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
-    .company-row { background: #1a1d27; border: 1px solid #2d3148; border-radius: 8px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: border-color 0.15s; }
+    /* Two column layout */
+    .main-layout { display: grid; grid-template-columns: 1fr 280px; gap: 0; min-height: calc(100vh - 300px); }
+
+    /* Company list */
+    .company-list { padding: 10px 16px 40px 24px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #1e2235; }
+    .company-row { background: #1a1d27; border: 1px solid #2d3148; border-radius: 6px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; transition: border-color 0.15s; }
     .company-row:hover { border-color: #a78bfa; }
-    .company-row.highlight { border-color: #34d399; }
+    .company-row.hl-green  { border-left: 3px solid #34d399; }
+    .company-row.hl-teal   { border-left: 3px solid #2dd4bf; }
+    .company-row.hl-yellow { border-left: 3px solid #fbbf24; }
+    .company-row.hl-orange { border-left: 3px solid #fb923c; }
+    .company-row.hl-due    { border-left: 3px solid #fbbf24; background: #fbbf2405; }
 
-    .badge { font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.04em; }
-    .badge.has_careers    { background: #34d39920; color: #34d399; border: 1px solid #34d39940; }
-    .badge.no_careers     { background: #fbbf2420; color: #fbbf24; border: 1px solid #fbbf2440; }
-    .badge.ignore         { background: #94a3b820; color: #64748b; border: 1px solid #94a3b840; }
+    .badge { font-size: 0.6rem; font-weight: 600; padding: 2px 6px; border-radius: 3px; white-space: nowrap; text-transform: uppercase; }
+    .badge.has_careers { background: #34d39912; color: #34d399; border: 1px solid #34d39925; }
+    .badge.no_careers  { background: #fbbf2412; color: #fbbf24; border: 1px solid #fbbf2425; }
+    .badge.ignore      { background: #94a3b812; color: #64748b;  border: 1px solid #94a3b825; }
 
-    .status-badge { font-size: 0.68rem; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
-    .status-badge.sent               { background: #60a5fa20; color: #60a5fa; }
-    .status-badge.needs_reply        { background: #34d39930; color: #34d399; font-weight: 700; }
-    .status-badge.bounce_retry       { background: #fb923c20; color: #fb923c; }
-    .status-badge.archived_rejected  { background: #f8717120; color: #f87171; }
-    .status-badge.archived_bad_email { background: #94a3b820; color: #94a3b8; }
-    .status-badge.pending            { background: #1e2235; color: #475569; }
-    .status-badge.reply_sent         { background: #a78bfa20; color: #a78bfa; }
+    .sp { font-size: 0.65rem; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
+    .sp-sent                { background: #60a5fa12; color: #60a5fa; }
+    .sp-meeting_requested   { background: #34d39925; color: #34d399; font-weight: 700; }
+    .sp-meeting_scheduled   { background: #34d39918; color: #34d399; }
+    .sp-meeting_completed   { background: #a78bfa18; color: #a78bfa; }
+    .sp-apply_link_received { background: #2dd4bf20; color: #2dd4bf; font-weight: 700; }
+    .sp-needs_reply         { background: #fbbf2420; color: #fbbf24; font-weight: 700; }
+    .sp-reply_sent          { background: #a78bfa12; color: #a78bfa; }
+    .sp-keep_warm           { background: #fb923c12; color: #fb923c; }
+    .sp-offer_received      { background: #34d39935; color: #34d399; font-weight: 700; }
+    .sp-bounce              { background: #fb923c12; color: #fb923c; }
+    .sp-archived            { background: #f8717112; color: #f87171; }
+    .sp-pending             { background: #1e2235; color: #3d4f66; }
+    .sp-ignore              { background: #1e2235; color: #3d4f66; }
 
-    .company-name { font-size: 0.92rem; font-weight: 500; flex: 1; }
-    .company-email { font-size: 0.75rem; color: #64748b; }
+    .cname { font-size: 0.85rem; font-weight: 500; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cemail { font-size: 0.68rem; color: #3d4f66; white-space: nowrap; }
+    .na-tag { font-size: 0.62rem; color: #a78bfa; background: #a78bfa0d; border: 1px solid #a78bfa18; border-radius: 3px; padding: 1px 5px; white-space: nowrap; }
+    .apply-tag { font-size: 0.62rem; color: #2dd4bf; background: #2dd4bf0d; border: 1px solid #2dd4bf18; border-radius: 3px; padding: 1px 5px; }
+    .tag-chip { font-size: 0.6rem; color: #64748b; background: #2d3148; border-radius: 3px; padding: 1px 5px; }
 
-    .empty { text-align: center; padding: 60px; color: #64748b; }
+    .empty { text-align: center; padding: 50px; color: #3d4f66; }
 
-    .toast { position: fixed; bottom: 24px; right: 24px; background: #34d399; color: #0f1117; padding: 10px 20px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; }
-    .toast.show { opacity: 1; }
-    .toast.error { background: #f87171; color: #fff; }
+    /* Activity feed */
+    .activity-panel { padding: 16px; overflow-y: auto; }
+    .activity-panel h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: #3d4f66; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .activity-item { padding: 7px 0; border-bottom: 1px solid #1e2235; }
+    .activity-msg { font-size: 0.73rem; color: #64748b; line-height: 1.4; }
+    .activity-ts  { font-size: 0.62rem; color: #2d3f55; margin-top: 2px; }
 
-    .scan-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+    /* Overlays */
+    .scan-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
     .scan-overlay.show { display: flex; }
-    .scan-overlay p { color: #e2e8f0; font-size: 1rem; }
-    .spinner { width: 40px; height: 40px; border: 3px solid #2d3148; border-top-color: #a78bfa; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .scan-overlay p { color: #e2e8f0; font-size: 0.9rem; }
+    .spinner { width: 32px; height: 32px; border: 3px solid #2d3148; border-top-color: #a78bfa; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast { position: fixed; bottom: 18px; right: 18px; background: #34d399; color: #0a1a12; padding: 8px 16px; border-radius: 5px; font-size: 0.78rem; font-weight: 600; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 300; max-width: 360px; }
+    .toast.show { opacity: 1; }
+    .toast.error { background: #f87171; color: #1a0000; }
+    .toast.info  { background: #60a5fa; color: #00101a; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>🚀 Resume Application Tracker</h1>
+  <h1>🚀 Resume Tracker</h1>
   <div class="header-actions">
-    <button class="btn btn-warning btn-sm" onclick="retryBounced()">Retry Bounced</button>
     <button class="btn btn-primary" onclick="scanInbox()">Scan Inbox</button>
+    <div class="divider"></div>
+    <button class="btn btn-green" onclick="sendBatch()">
+      Send Pending ({{ stats.pending }})
+    </button>
+    <button class="btn btn-orange" onclick="retryBatch()">
+      Retry Bounced ({{ stats.retry_queued }})
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="sendThankyou()">
+      Thank You ({{ stats.thankyou_due }})
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="sendKeepwarm()">
+      Keep Warm ({{ stats.keepwarm_due }})
+    </button>
+    <div class="divider"></div>
+    <button class="btn btn-ghost btn-sm" onclick="archiveNoResponse()">Archive 30d</button>
+    <button class="btn btn-ghost btn-sm" onclick="takeSnapshot()">Snapshot</button>
+    <a class="btn btn-ghost btn-sm" href="/api/export">Export CSV</a>
   </div>
 </header>
 
-<div class="stats-grid">
-  <a class="stat-card c-purple {% if filter_by == 'all' %}active{% endif %}" href="/?filter=all">
-    <span class="stat-number">{{ stats.total }}</span>
-    <span class="stat-label">Total</span>
-  </a>
-  <a class="stat-card c-blue {% if filter_by == 'sent' %}active{% endif %}" href="/?filter=sent">
-    <span class="stat-number">{{ stats.sent }}</span>
-    <span class="stat-label">Sent</span>
-  </a>
-  <a class="stat-card c-gray {% if filter_by == 'pending' %}active{% endif %}" href="/?filter=pending">
-    <span class="stat-number">{{ stats.pending }}</span>
-    <span class="stat-label">Pending</span>
-  </a>
-  <a class="stat-card c-green {% if filter_by == 'needs_reply' %}active{% endif %}" href="/?filter=needs_reply">
-    <span class="stat-number">{{ stats.needs_reply }}</span>
-    <span class="stat-label">Needs Reply</span>
-  </a>
-  <a class="stat-card c-green" href="/?filter=needs_reply">
-    <span class="stat-number">{{ stats.positive }}</span>
-    <span class="stat-label">Positive</span>
-  </a>
-  <a class="stat-card c-red {% if filter_by == 'rejected' %}active{% endif %}" href="/?filter=rejected">
-    <span class="stat-number">{{ stats.negative }}</span>
-    <span class="stat-label">Rejected</span>
-  </a>
-  <a class="stat-card c-orange {% if filter_by == 'bounced' %}active{% endif %}" href="/?filter=bounced">
-    <span class="stat-number">{{ stats.bounced }}</span>
-    <span class="stat-label">Bounced</span>
-  </a>
-  <a class="stat-card c-yellow">
-    <span class="stat-number">{{ stats.retry_queued }}</span>
-    <span class="stat-label">Retry Queued</span>
-  </a>
+<!-- Stats -->
+<div class="stats-wrap">
+  <div class="stats-main">
+    <a class="stat c-purple {% if filter_by=='all' %}active{% endif %}" href="/?filter=all">
+      <span class="stat-num">{{ stats.total }}</span><span class="stat-lbl">Total</span>
+    </a>
+    <a class="stat c-blue {% if filter_by=='sent' %}active{% endif %}" href="/?filter=sent">
+      <span class="stat-num">{{ stats.sent }}</span><span class="stat-lbl">Sent</span>
+    </a>
+    <a class="stat c-gray {% if filter_by=='pending' %}active{% endif %}" href="/?filter=pending">
+      <span class="stat-num">{{ stats.pending }}</span><span class="stat-lbl">Pending</span>
+    </a>
+    <a class="stat c-green {% if filter_by=='meeting' %}active{% endif %}" href="/?filter=meeting">
+      <span class="stat-num">{{ stats.meeting_requested }}</span><span class="stat-lbl">Meetings</span>
+    </a>
+    <a class="stat c-teal {% if filter_by=='apply' %}active{% endif %}" href="/?filter=apply">
+      <span class="stat-num">{{ stats.apply_link_received }}</span><span class="stat-lbl">Apply Links</span>
+    </a>
+    <a class="stat c-yellow {% if filter_by=='action' %}active{% endif %}" href="/?filter=action">
+      <span class="stat-num">{{ stats.needs_reply }}</span><span class="stat-lbl">Needs Reply</span>
+    </a>
+    <a class="stat c-orange {% if filter_by=='keep_warm' %}active{% endif %}" href="/?filter=keep_warm">
+      <span class="stat-num">{{ stats.keep_warm }}</span><span class="stat-lbl">Keep Warm</span>
+    </a>
+    <a class="stat c-pink">
+      <span class="stat-num">{{ stats.offer_received }}</span><span class="stat-lbl">Offers</span>
+    </a>
+    <a class="stat c-red {% if filter_by=='rejected' %}active{% endif %}" href="/?filter=rejected">
+      <span class="stat-num">{{ stats.rejected }}</span><span class="stat-lbl">Rejected</span>
+    </a>
+    <a class="stat c-orange {% if filter_by=='bounced' %}active{% endif %}" href="/?filter=bounced">
+      <span class="stat-num">{{ stats.bounced }}</span><span class="stat-lbl">Bounced</span>
+    </a>
+    <a class="stat c-gray {% if filter_by=='ignored' %}active{% endif %}" href="/?filter=ignored">
+      <span class="stat-num">{{ stats.ignored }}</span><span class="stat-lbl">Blocked</span>
+    </a>
+    {% if stats.due_today %}
+    <a class="stat c-yellow {% if filter_by=='due_today' %}active{% endif %}" href="/?filter=due_today">
+      <span class="stat-num">{{ stats.due_today | length }}</span><span class="stat-lbl">Due Today</span>
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="stats-detail">
+
+    <div class="rate-badge">
+      <span>{{ stats.response_rate }}%</span>response rate
+    </div>
+    <div class="rate-badge" style="color:#60a5fa; border-color:#60a5fa30; background:#60a5fa0d">
+      <span>{{ stats.avg_days_to_response }}d</span>avg to reply
+    </div>
+
+    {% if stats.next_actions %}
+    <div class="detail-group">
+      <h4>Next Actions</h4>
+      {% for action, count in stats.next_actions.items() %}
+      <div class="detail-item"><span class="dc">{{ count }}</span>{{ action | replace('_',' ') }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if stats.meeting_outcomes %}
+    <div class="detail-group">
+      <h4>Meeting Outcomes</h4>
+      {% for outcome, count in stats.meeting_outcomes.items() %}
+      <div class="detail-item"><span class="dc green">{{ count }}</span>{{ outcome }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="detail-group">
+      <h4>Retry Stats</h4>
+      <div class="detail-item"><span class="dc orange">{{ stats.retry_queued }}</span>queued</div>
+      <div class="detail-item"><span class="dc">{{ stats.retry_1st }}</span>1st fallback</div>
+      <div class="detail-item"><span class="dc">{{ stats.retry_2nd }}</span>2nd fallback</div>
+      <div class="detail-item"><span class="dc">{{ stats.retry_3rd }}</span>3rd+ fallback</div>
+      <div class="detail-item"><span class="dc red">{{ stats.bad_email }}</span>exhausted</div>
+    </div>
+
+    <div class="detail-group">
+      <h4>Future Pipeline</h4>
+      <div class="detail-item"><span class="dc orange">{{ stats.keep_warm }}</span>keep warm</div>
+      <div class="detail-item"><span class="dc">{{ stats.next_actions.get('follow_up_next_search', 0) }}</span>next search</div>
+      <div class="detail-item"><span class="dc">{{ stats.no_response }}</span>no response archived</div>
+    </div>
+
+  </div>
 </div>
 
+<!-- Due today bar -->
+{% if stats.due_today %}
+<div class="due-today-bar">
+  <span class="due-lbl">⏰ Due Today</span>
+  {% for name in stats.due_today[:8] %}
+  <a class="due-pill" href="/?filter=due_today">{{ name }}</a>
+  {% endfor %}
+  {% if stats.due_today | length > 8 %}
+  <span style="font-size:0.68rem; color:#fbbf24">+{{ stats.due_today | length - 8 }} more</span>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Filters -->
 <div class="toolbar">
-  <a class="filter-btn {% if filter_by == 'needs_reply' %}active{% endif %}" href="/?filter=needs_reply">Needs Reply</a>
-  <a class="filter-btn {% if filter_by == 'sent' %}active{% endif %}" href="/?filter=sent">Sent</a>
-  <a class="filter-btn {% if filter_by == 'bounced' %}active{% endif %}" href="/?filter=bounced">Bounced</a>
-  <a class="filter-btn {% if filter_by == 'rejected' %}active{% endif %}" href="/?filter=rejected">Rejected</a>
-  <a class="filter-btn {% if filter_by == 'pending' %}active{% endif %}" href="/?filter=pending">Pending</a>
-  <a class="filter-btn {% if filter_by == 'all' %}active{% endif %}" href="/?filter=all">All</a>
-  <span class="count-label">{{ total_shown }} shown</span>
-  <form method="get" style="margin-left:auto">
+  <a class="filter-btn {% if filter_by=='action' %}active{% endif %}" href="/?filter=action">Action Queue</a>
+  <a class="filter-btn {% if filter_by=='meeting' %}active{% endif %}" href="/?filter=meeting">Meetings</a>
+  <a class="filter-btn c-teal {% if filter_by=='apply' %}active{% endif %}" href="/?filter=apply">Apply Links</a>
+  <a class="filter-btn c-orange {% if filter_by=='keep_warm' %}active{% endif %}" href="/?filter=keep_warm">Keep Warm</a>
+  <a class="filter-btn {% if filter_by=='sent' %}active{% endif %}" href="/?filter=sent">Sent</a>
+  <a class="filter-btn c-orange {% if filter_by=='bounced' %}active{% endif %}" href="/?filter=bounced">Bounced</a>
+  <a class="filter-btn c-red {% if filter_by=='rejected' %}active{% endif %}" href="/?filter=rejected">Rejected</a>
+  <a class="filter-btn c-yellow {% if filter_by=='due_today' %}active{% endif %}" href="/?filter=due_today">Due Today</a>
+  <a class="filter-btn {% if filter_by=='pending' %}active{% endif %}" href="/?filter=pending">Pending</a>
+  <a class="filter-btn {% if filter_by=='ignored' %}active{% endif %}" href="/?filter=ignored">Blocked</a>
+  <a class="filter-btn {% if filter_by=='archived' %}active{% endif %}" href="/?filter=archived">Archived</a>
+  <a class="filter-btn {% if filter_by=='all' %}active{% endif %}" href="/?filter=all">All</a>
+  {% for tag in all_tags %}
+  <a class="filter-btn tag-pill {% if tag_filter==tag %}active{% endif %}" href="/?filter={{ filter_by }}&tag={{ tag }}">{{ tag }}</a>
+  {% endfor %}
+  <span class="count-lbl">{{ total_shown }} shown</span>
+  <form method="get" style="margin-left:auto; display:flex; gap:6px">
     <input type="hidden" name="filter" value="{{ filter_by }}">
-    <input class="search-input" type="text" name="search" placeholder="Search company..." value="{{ search }}">
+    <input class="search-input" type="text" name="search" placeholder="Search..." value="{{ search }}">
   </form>
 </div>
 
-<div class="company-list">
-  {% if partners %}
-    {% for partner in partners %}
-    {% set status = partner.status or 'pending' %}
-    {% set status_class = status | replace(':', '_') | replace(' ', '_') %}
-    <a class="company-row {% if status == 'needs_reply' %}highlight{% endif %}" href="/company/{{ loop.index0 }}">
-      <span class="badge {{ partner.classification }}">{{ partner.classification | replace('_', ' ') }}</span>
-      <span class="company-name">{{ partner.name }}</span>
-      <span class="company-email">{{ partner.contact_email or '—' }}</span>
-      <span class="status-badge {{ status_class }}">{{ status | replace('_', ' ') | replace(':', ' — ') }}</span>
-    </a>
-    {% endfor %}
-  {% else %}
-    <div class="empty">No companies match this filter.</div>
-  {% endif %}
+<!-- Main layout: list + activity feed -->
+<div class="main-layout">
+
+  <div class="company-list">
+    {% if partners %}
+      {% for partner in partners %}
+      {% set status = partner.status or 'pending' %}
+      {% set hl = '' %}
+      {% if status == 'meeting_requested' %}{% set hl = 'hl-green' %}
+      {% elif status == 'apply_link_received' %}{% set hl = 'hl-teal' %}
+      {% elif status == 'needs_reply' %}{% set hl = 'hl-yellow' %}
+      {% elif status == 'keep_warm' %}{% set hl = 'hl-orange' %}
+      {% endif %}
+      {% if partner.next_action_date and partner.next_action_date | is_due %}
+        {% set hl = 'hl-due' %}
+      {% endif %}
+
+      {% set sp = 'sp-' + status | replace(':', '_') | replace(' ','_') %}
+      {% if 'archived' in status %}{% set sp = 'sp-archived' %}{% endif %}
+      {% if 'bounce' in status %}{% set sp = 'sp-bounce' %}{% endif %}
+
+      <a class="company-row {{ hl }}" href="/company/{{ loop.index0 }}">
+        <span class="badge {{ partner.classification }}">{{ partner.classification | replace('_',' ') }}</span>
+        <span class="cname">{{ partner.name }}</span>
+        {% if partner.apply_url %}<span class="apply-tag">🔗 apply</span>{% endif %}
+        {% if partner.next_action and partner.next_action != 'none' %}
+          <span class="na-tag">{{ partner.next_action | replace('_',' ') }}</span>
+        {% endif %}
+        {% for tag in (partner.tags or '').split('|') %}
+          {% if tag.strip() %}<span class="tag-chip">{{ tag.strip() }}</span>{% endif %}
+        {% endfor %}
+        <span class="cemail">{{ partner.contact_email or '—' }}</span>
+        <span class="{{ sp }}">{{ status | replace('_',' ') | replace(':',' — ') }}</span>
+      </a>
+      {% endfor %}
+    {% else %}
+      <div class="empty">No companies match this filter.</div>
+    {% endif %}
+  </div>
+
+  <!-- Activity feed -->
+  <div class="activity-panel">
+    <h3>
+      Activity Feed
+      <button class="btn btn-ghost btn-sm" onclick="location.reload()">↻</button>
+    </h3>
+    {% if activity %}
+      {% for entry in activity %}
+      <div class="activity-item">
+        <div class="activity-msg">{{ entry.msg }}</div>
+        <div class="activity-ts">{{ entry.ts[:16] | replace('T',' ') }}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div style="font-size:0.72rem; color:#3d4f66">No activity yet. Run a scan to get started.</div>
+    {% endif %}
+  </div>
+
 </div>
 
 <div class="scan-overlay" id="scan-overlay">
   <div class="spinner"></div>
-  <p>Scanning inbox...</p>
+  <p id="scan-msg">Scanning inbox...</p>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-function showToast(msg, isError = false) {
+function showToast(msg, type = '') {
   const t = document.getElementById("toast");
   t.textContent = msg;
-  t.className = "toast show" + (isError ? " error" : "");
-  setTimeout(() => t.className = "toast", 3000);
+  t.className = "toast show" + (type ? ' ' + type : '');
+  setTimeout(() => t.className = "toast", 4000);
+}
+
+async function post(url, body = {}) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  return res.json();
 }
 
 async function scanInbox() {
   document.getElementById("scan-overlay").classList.add("show");
+  document.getElementById("scan-msg").textContent = "Scanning inbox...";
   try {
-    const res = await fetch("/api/scan", { method: "POST" });
-    const data = await res.json();
+    const data = await post("/api/scan");
     document.getElementById("scan-overlay").classList.remove("show");
     if (data.success) {
-      const s = data.stats;
-      showToast(`Scan done — ${s.matched || 0} matches, ${s.positive || 0} positive, ${s.bounce || 0} bounces`);
-      setTimeout(() => location.reload(), 1500);
+      const s = data.stats || {};
+      showToast(`Scan done — meetings: ${s.positive_meeting||0}, apply: ${s.positive_apply||0}, bounces: ${s.bounce||0}`);
+      setTimeout(() => location.reload(), 2000);
     } else {
-      showToast("Scan failed: " + data.error, true);
+      showToast("Scan failed: " + data.error, "error");
     }
   } catch (e) {
     document.getElementById("scan-overlay").classList.remove("show");
-    showToast("Scan error: " + e, true);
+    showToast("Error: " + e, "error");
   }
 }
 
-async function retryBounced() {
-  showToast("Retrying bounced emails...");
-  const res = await fetch("/api/retry_bounced", { method: "POST" });
-  const data = await res.json();
-  data.success ? showToast("Retry complete.") : showToast("Retry failed: " + data.error, true);
+async function sendBatch() {
+  showToast("Sending next 50 pending emails...", "info");
+  const data = await post("/api/send_batch");
+  if (data.success) {
+    showToast(`Sent: ${data.sent} | Failed: ${data.failed} | Remaining: ${data.remaining}${data.rate_limited ? ' ⚠️ rate limited' : ''}`);
+    setTimeout(() => location.reload(), 2000);
+  } else {
+    showToast("Send failed: " + data.error, "error");
+  }
+}
+
+async function retryBatch() {
+  showToast("Retrying next 50 bounced emails...", "info");
+  const data = await post("/api/retry_batch");
+  if (data.success) {
+    showToast(`Sent: ${data.sent} | Failed: ${data.failed} | Remaining: ${data.remaining}`);
+    setTimeout(() => location.reload(), 2000);
+  } else {
+    showToast("Retry failed: " + data.error, "error");
+  }
+}
+
+async function sendThankyou() {
+  showToast("Sending thank you replies...", "info");
+  const data = await post("/api/send_thankyou");
+  if (data.success) {
+    showToast(`Thank you sent: ${data.sent} | Remaining: ${data.remaining}`);
+    setTimeout(() => location.reload(), 2000);
+  } else {
+    showToast("Failed: " + data.error, "error");
+  }
+}
+
+async function sendKeepwarm() {
+  showToast("Sending keep warm replies...", "info");
+  const data = await post("/api/send_keepwarm");
+  if (data.success) {
+    showToast(`Keep warm sent: ${data.sent} | Remaining: ${data.remaining}`);
+    setTimeout(() => location.reload(), 2000);
+  } else {
+    showToast("Failed: " + data.error, "error");
+  }
+}
+
+async function archiveNoResponse() {
+  if (!confirm("Archive all companies with no response after 30 days?")) return;
+  const data = await post("/api/archive_no_response", { days: 30 });
+  if (data.success) {
+    showToast(`Archived: ${data.archived} companies with no response`);
+    setTimeout(() => location.reload(), 2000);
+  } else {
+    showToast("Failed: " + data.error, "error");
+  }
+}
+
+async function takeSnapshot() {
+  const data = await post("/api/snapshot");
+  data.success ? showToast("Snapshot saved.") : showToast("Snapshot failed: " + data.error, "error");
 }
 </script>
 
