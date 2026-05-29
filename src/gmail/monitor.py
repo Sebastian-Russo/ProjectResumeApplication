@@ -147,10 +147,13 @@ def log_activity(partners: list[dict], message: str) -> None:
 
 
 def update_partner_status(partner: dict, status: str, message_id: str,
-                          classification: dict = None) -> None:
+                          classification: dict = None, reply_body: str = "") -> None:
     now = datetime.now().isoformat()
     partner["status"] = status
     partner["last_reply"] = now
+
+    if reply_body:
+        partner["reply_body"] = reply_body[:3000]
 
     if classification:
         partner["response_type"] = classification.get("response_type", "")
@@ -311,7 +314,7 @@ def run_monitor() -> dict:
     new_cols = {
         "last_reply": "", "response_type": "", "next_action": "",
         "next_action_date": "", "apply_url": "", "email_thread": "",
-        "contact_name": "", "meeting_notes": "", "contacts": "[]",
+        "reply_body": "", "contact_name": "", "meeting_notes": "", "contacts": "[]",
         "processed_message_ids": "", "fallback_email": "", "fallback_queue": "",
         "notes": "", "tags": "", "manually_sent": "", "response_rate_days": "",
         "sent_at": ""
@@ -440,7 +443,7 @@ def run_monitor() -> dict:
             print(f"  → Ignored")
             continue
 
-        update_partner_status(partner, new_status, message_id, classification)
+        update_partner_status(partner, new_status, message_id, classification, reply_body=body)
         log_activity(partners, f"{response_type}: {partner['name']} — {classification.get('summary','')[:60]}")
         print(f"  → {new_status}")
 
